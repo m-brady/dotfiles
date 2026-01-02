@@ -70,7 +70,11 @@ fi
 echo -e "\n${GREEN}Checking for Homebrew...${NC}"
 if ! command -v brew &> /dev/null; then
   echo -e "${YELLOW}Homebrew not found. Installing Homebrew...${NC}"
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  echo -e "${YELLOW}Note: This will download and run the official Homebrew installation script.${NC}"
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || {
+    echo -e "${RED}Failed to install Homebrew. Exiting...${NC}"
+    exit 1
+  }
   
   # Add Homebrew to PATH based on architecture
   if [[ "$(uname -m)" == "arm64" ]]; then
@@ -97,13 +101,24 @@ fi
 echo -e "\n${GREEN}Checking for Oh My Zsh...${NC}"
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
   echo -e "${YELLOW}Installing Oh My Zsh...${NC}"
-  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+  RUNZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended || {
+    echo -e "${RED}Failed to install Oh My Zsh. Continuing...${NC}"
+  }
   
   # Install zsh-autosuggestions
-  git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+  ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+  if [ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]; then
+    git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions" || {
+      echo -e "${RED}Failed to install zsh-autosuggestions. Continuing...${NC}"
+    }
+  fi
   
   # Install zsh-syntax-highlighting
-  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+  if [ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]; then
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" || {
+      echo -e "${RED}Failed to install zsh-syntax-highlighting. Continuing...${NC}"
+    }
+  fi
 else
   echo -e "${GREEN}✓${NC} Oh My Zsh already installed"
 fi

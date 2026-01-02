@@ -40,8 +40,8 @@ alias brewup='brew update && brew upgrade && brew cleanup'
 alias cleanup='brew cleanup && brew autoremove'
 
 # IP addresses
-alias ip='curl ifconfig.me'
-alias localip="ipconfig getifaddr en0"
+alias ip='curl -s ifconfig.me'
+alias localip="ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null || echo 'No network interface found'"
 
 # Lock screen
 alias afk='pmset displaysleepnow'

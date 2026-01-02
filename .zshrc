@@ -89,7 +89,8 @@ setopt HIST_REDUCE_BLANKS
 
 # Completions
 autoload -Uz compinit
-if [ $(date +'%j') != $(stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null) ]; then
+# Check if compinit needs to be run (once per day)
+if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
   compinit
 else
   compinit -C

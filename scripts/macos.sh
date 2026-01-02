@@ -10,7 +10,18 @@ osascript -e 'tell application "System Preferences" to quit'
 sudo -v
 
 # Keep-alive: update existing `sudo` time stamp until script has finished
-while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+# This will run for a maximum of 30 minutes
+timeout=1800  # 30 minutes
+elapsed=0
+while true; do
+  if [ $elapsed -ge $timeout ]; then
+    break
+  fi
+  sudo -n true
+  sleep 60
+  elapsed=$((elapsed + 60))
+  kill -0 "$$" 2>/dev/null || exit
+done &
 
 echo "Setting macOS defaults..."
 
@@ -222,5 +233,7 @@ for app in "Activity Monitor" \
 	"Finder" \
 	"Safari" \
 	"SystemUIServer"; do
-	killall "${app}" &> /dev/null || true
+	if pgrep -x "${app}" > /dev/null; then
+		killall "${app}" &> /dev/null || true
+	fi
 done
