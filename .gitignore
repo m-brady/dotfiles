@@ -1,0 +1,17 @@
+# Ignore local configuration files
+*.local
+
+# macOS
+.DS_Store
+
+# Backup files created by install script
+*.backup
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# Private or sensitive files
+private/
+secrets/
