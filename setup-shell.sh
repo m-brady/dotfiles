@@ -25,3 +25,13 @@ if ! grep -q '.local/bin' "$ZSHRC"; then
 else
     echo "~/.local/bin already in PATH in .zshrc"
 fi
+
+# Initialize Starship prompt if not already present
+if ! grep -q 'starship init' "$ZSHRC"; then
+    echo "" >> "$ZSHRC"
+    echo "# Initialize Starship prompt" >> "$ZSHRC"
+    echo 'eval "$(starship init zsh)"' >> "$ZSHRC"
+    echo "Added Starship initialization to .zshrc"
+else
+    echo "Starship initialization already in .zshrc"
+fi

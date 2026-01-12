@@ -33,6 +33,11 @@ echo ""
 echo "==> Installing Claude Code..."
 ./install-claude-code.sh
 
+# Install Starship prompt and Nerd Font
+echo ""
+echo "==> Installing Starship prompt..."
+./install-starship.sh
+
 # Setup shell PATH
 echo ""
 echo "==> Setting up shell..."
@@ -42,6 +47,7 @@ echo ""
 echo "==> Bootstrap complete!"
 echo ""
 echo "Next steps:"
-echo "  1. Restart your shell or run: source ~/.zshrc"
-echo "  2. Run 'claude' to authenticate"
+echo "  1. Configure your terminal to use 'FiraCode Nerd Font' or 'FiraCode NF'"
+echo "  2. Restart your shell or run: source ~/.zshrc"
+echo "  3. Run 'claude' to authenticate"
 echo ""
