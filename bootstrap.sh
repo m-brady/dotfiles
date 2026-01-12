@@ -38,10 +38,26 @@ echo ""
 echo "==> Installing Starship prompt..."
 ./install-starship.sh
 
+# Install mise for language version management
+echo ""
+echo "==> Installing mise..."
+./install-mise.sh
+
 # Setup shell PATH
 echo ""
 echo "==> Setting up shell..."
 ./setup-shell.sh
+
+# Install language runtimes via mise
+echo ""
+echo "==> Installing language runtimes (bun, node, go)..."
+# Source mise to make it available in this script
+if [ -f "$HOME/.local/bin/mise" ]; then
+    eval "$($HOME/.local/bin/mise activate bash)"
+elif command -v mise &> /dev/null; then
+    eval "$(mise activate bash)"
+fi
+mise install -y || echo "Note: mise install will complete after shell restart"
 
 echo ""
 echo "==> Bootstrap complete!"

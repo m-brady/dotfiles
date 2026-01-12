@@ -1,0 +1,14 @@
+# mise configuration for language/tool version management
+# https://mise.jdx.dev/configuration.html
+
+[tools]
+# JavaScript runtimes
+bun = "latest"
+node = "lts"  # npm comes with node
+
+# Go programming language
+go = "latest"
+
+[settings]
+# Auto-install tools when entering a directory with .mise.toml
+experimental = true

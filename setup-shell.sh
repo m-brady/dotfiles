@@ -26,6 +26,16 @@ else
     echo "~/.local/bin already in PATH in .zshrc"
 fi
 
+# Initialize mise if not already present
+if ! grep -q 'mise activate' "$ZSHRC"; then
+    echo "" >> "$ZSHRC"
+    echo "# Initialize mise for language version management" >> "$ZSHRC"
+    echo 'eval "$(mise activate zsh)"' >> "$ZSHRC"
+    echo "Added mise initialization to .zshrc"
+else
+    echo "mise initialization already in .zshrc"
+fi
+
 # Initialize Starship prompt if not already present
 if ! grep -q 'starship init' "$ZSHRC"; then
     echo "" >> "$ZSHRC"
