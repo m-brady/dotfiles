@@ -17,6 +17,8 @@ cd ~/dotfiles
 
 - **Claude Code CLI** - AI-powered coding assistant
   - `install-claude-code.sh` - Downloads and installs Claude Code
+  - `setup-claude-config.sh` - Installs safe command allowlist configuration
+  - `.claude/settings.json` - Pre-configured permissions for common dev tools
   - `setup-shell.sh` - Adds `~/.local/bin` to PATH and initializes tools
   - `bootstrap.sh` - One-command setup for fresh machines
 
@@ -35,6 +37,35 @@ After running the scripts:
 1. Restart your shell or run `source ~/.zshrc` (or equivalent)
 2. Run `claude` to authenticate and complete setup
 3. Configure your preferred settings with `/config` in Claude Code
+
+## Claude Code Configuration
+
+The included `.claude/settings.json` provides a safe allowlist of common development commands that Claude Code can run without prompting. This includes:
+
+**Version Control:**
+- Git operations (status, diff, commit, push, branch, merge, etc.)
+- GitHub CLI (gh) commands
+
+**Package Managers:**
+- npm/npx commands (install, run, test, build)
+- bun commands (install, add, run, test)
+- go commands (build, run, test, mod)
+- cargo, pip, and other language tools
+
+**Development Tools:**
+- mise tool version management
+- Docker and docker-compose commands
+- Build tools (make)
+
+**File Operations:**
+- Safe file operations (ls, mkdir, mv, cp, cat, touch)
+- Navigation (cd, pwd)
+
+**System Commands:**
+- Environment inspection (env, printenv, whoami)
+- Network tools (curl, wget)
+
+The configuration is automatically installed to `~/.claude/settings.json` during bootstrap. You can customize it later by editing that file directly.
 
 ## Using mise
 

@@ -33,6 +33,11 @@ echo ""
 echo "==> Installing Claude Code..."
 ./install-claude-code.sh
 
+# Setup Claude Code configuration
+echo ""
+echo "==> Setting up Claude Code configuration..."
+./setup-claude-config.sh
+
 # Install Starship prompt and Nerd Font
 echo ""
 echo "==> Installing Starship prompt..."
