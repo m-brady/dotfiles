@@ -1,30 +1,27 @@
 #!/usr/bin/env bash
-# Setup shell configuration for dotfiles
+# Setup zsh configuration for dotfiles (macOS)
+
+ZSHRC="$HOME/.zshrc"
+
+# Create .zshrc if it doesn't exist
+touch "$ZSHRC"
+
+# Add Homebrew initialization if not already present
+if ! grep -q 'brew shellenv' "$ZSHRC"; then
+    echo "" >> "$ZSHRC"
+    echo "# Initialize Homebrew" >> "$ZSHRC"
+    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> "$ZSHRC"
+    echo "Added Homebrew initialization to .zshrc"
+else
+    echo "Homebrew initialization already in .zshrc"
+fi
 
 # Add ~/.local/bin to PATH if not already present
-add_to_path() {
-    local shell_config="$1"
-    local path_export='export PATH="$HOME/.local/bin:$PATH"'
-
-    if [ -f "$shell_config" ]; then
-        if ! grep -q '.local/bin' "$shell_config"; then
-            echo "" >> "$shell_config"
-            echo "# Added by dotfiles setup" >> "$shell_config"
-            echo "$path_export" >> "$shell_config"
-            echo "Added ~/.local/bin to PATH in $shell_config"
-        else
-            echo "~/.local/bin already in PATH in $shell_config"
-        fi
-    fi
-}
-
-# Detect shell and add to appropriate config file
-if [ -n "$ZSH_VERSION" ]; then
-    add_to_path "$HOME/.zshrc"
-elif [ -n "$BASH_VERSION" ]; then
-    add_to_path "$HOME/.bashrc"
-    add_to_path "$HOME/.bash_profile"
+if ! grep -q '.local/bin' "$ZSHRC"; then
+    echo "" >> "$ZSHRC"
+    echo "# Add ~/.local/bin to PATH" >> "$ZSHRC"
+    echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$ZSHRC"
+    echo "Added ~/.local/bin to PATH in .zshrc"
 else
-    echo "Unknown shell. Manually add to your shell config:"
-    echo '  export PATH="$HOME/.local/bin:$PATH"'
+    echo "~/.local/bin already in PATH in .zshrc"
 fi

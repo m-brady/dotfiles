@@ -23,6 +23,11 @@ fi
 
 cd "$DOTFILES_DIR"
 
+# Install Homebrew
+echo ""
+echo "==> Installing Homebrew..."
+./install-homebrew.sh
+
 # Install Claude Code
 echo ""
 echo "==> Installing Claude Code..."
