@@ -76,25 +76,55 @@
       "mcp__plugin_playwright_playwright__browser_press_key",
       "mcp__plugin_playwright_playwright__browser_drag",
       "mcp__plugin_playwright_playwright__browser_evaluate",
-      "mcp__plugin_playwright_playwright__browser_close",
-      "mcp__plugin_context7_context7__resolve-library-id",
-      "mcp__plugin_context7_context7__query-docs"
-    ]
+      "mcp__plugin_playwright_playwright__browser_close"
+    ],
+    "defaultMode": "auto"
+  },
+  "skillOverrides": {
+    "agents-sdk": "off",
+    "cloudflare": "off",
+    "cloudflare-email-service": "off",
+    "diagnosing-bugs": "off",
+    "durable-objects": "off",
+    "resolving-merge-conflicts": "off",
+    "sandbox-sdk": "off",
+    "turnstile-spin": "off",
+    "web-perf": "off",
+    "workers-best-practices": "off",
+    "handoff": "off",
+    "wrangler": "off"
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline-command.sh"
   },
   "enabledPlugins": {
-    "frontend-design@claude-plugins-official": true,
-    "feature-dev@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": false,
+    "feature-dev@claude-plugins-official": false,
     "commit-commands@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
-    "gopls-lsp@claude-plugins-official": true,
-    "code-simplifier@claude-plugins-official": true,
+    "gopls-lsp@claude-plugins-official": false,
+    "code-simplifier@claude-plugins-official": false,
     "context7@claude-plugins-official": true,
-    "code-review@claude-plugins-official": true,
+    "code-review@claude-plugins-official": false,
     "claude-md-management@claude-plugins-official": true,
-    "claude-code-setup@claude-plugins-official": true,
+    "claude-code-setup@claude-plugins-official": false,
     "hookify@claude-plugins-official": true,
-    "pr-review-toolkit@claude-plugins-official": true,
+    "pr-review-toolkit@claude-plugins-official": false,
     "playwright@claude-plugins-official": true,
-    "skill-creator@claude-plugins-official": true
-  }
+    "skill-creator@claude-plugins-official": true,
+    "swift-lsp@claude-plugins-official": false,
+    "posthog@claude-plugins-official": true
+  },
+  "effortLevel": "high",
+  "tui": "fullscreen",
+  "voice": {
+    "enabled": true,
+    "mode": "hold"
+  },
+  "skipDangerousModePermissionPrompt": true,
+  "skipWorkflowUsageWarning": true,
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true,
+  "voiceEnabled": true
 }
