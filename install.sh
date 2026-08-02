@@ -19,6 +19,12 @@ ln -sf "$DOTFILES/starship.toml" ~/.config/starship.toml
 # Claude Code
 mkdir -p ~/.claude
 ln -sf "$DOTFILES/claude/settings.json" ~/.claude/settings.json
+ln -sf "$DOTFILES/claude/CLAUDE.md" ~/.claude/CLAUDE.md
+
+# Note: Claude Code writes settings.json atomically (temp file + rename), which
+# REPLACES the symlink with a regular file. If ~/.claude/settings.json is not a
+# symlink, changes since the last link are untracked — check with `ls -la` and
+# copy back into claude/ before re-running this script, or they'll be clobbered.
 
 echo "Dotfiles linked."
 
