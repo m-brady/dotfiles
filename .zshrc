@@ -1,4 +1,4 @@
-eval "$(/Users/michaelbrady/.local/bin/mise activate zsh)"
+eval "$(/opt/homebrew/bin/mise activate zsh)"
 eval "$(starship init zsh)"
 export PATH="/Users/michaelbrady/.bun/bin:$PATH"
 alias gemini="bunx --package @google/gemini-cli gemini"
