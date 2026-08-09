@@ -10,3 +10,9 @@
 # (~/.local/bin here, /opt/homebrew/bin on the mini), which is the kind of one-line
 # divergence that quietly forks a dotfiles repo.
 eval "$(/opt/homebrew/bin/mise activate --shims)"
+
+# pipx-installed CLIs live here — notably `idb`, which drives the iOS simulator on the
+# mini. This has to be in .zshenv rather than .zshrc: those calls arrive over ssh as
+# non-interactive shells, which never read .zshrc, and a missing idb there reads as
+# "not installed" rather than "not on PATH".
+export PATH="$HOME/.local/bin:$PATH"
