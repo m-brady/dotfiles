@@ -26,11 +26,15 @@ alias cw="claude --worktree"
 # version management: nothing in ~/Code pins a Python version. The guard on `pyenv init`
 # matters — unguarded, it throws "command not found" on every shell start on a machine
 # without pyenv.
+# Two separate conditions on purpose. $PYENV_ROOT/bin does NOT exist here — pyenv is a
+# Homebrew install and ~/.pyenv is only its data directory (versions/, shims/), so that
+# first check has always been false and is kept only for a source-built pyenv. The
+# `pyenv init` line is the one that actually does the work, and it must be guarded on
+# the BINARY, not on that directory: nesting it inside the dead check silently dropped
+# python3 from pyenv's 3.12.8 to Homebrew's 3.14.6.
 export PYENV_ROOT="$HOME/.pyenv"
-if [[ -d $PYENV_ROOT/bin ]]; then
-  export PATH="$PYENV_ROOT/bin:$PATH"
-  command -v pyenv >/dev/null && eval "$(pyenv init -)"
-fi
+[[ -d "$PYENV_ROOT/bin" ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+command -v pyenv >/dev/null && eval "$(pyenv init -)"
 
 # Android SDK (IronLog local builds) — added 2026-06-21
 if [[ -d "/opt/homebrew/share/android-commandlinetools" ]]; then
