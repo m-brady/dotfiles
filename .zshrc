@@ -1,7 +1,5 @@
 eval "$(starship init zsh)"
 export PATH="/Users/michaelbrady/.bun/bin:$PATH"
-alias gemini="bunx --package @google/gemini-cli gemini"
-
 # opencode
 export PATH=/Users/michaelbrady/.opencode/bin:$PATH
 
@@ -14,3 +12,5 @@ export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
 [ -s "/Users/michaelbrady/.bun/_bun" ] && source "/Users/michaelbrady/.bun/_bun"
 
 alias cw="claude --worktree"
+export PATH="$HOME/.local/bin:$PATH"
+alias python=python3
