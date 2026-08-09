@@ -33,7 +33,13 @@ ln -sf "$DOTFILES/claude/CLAUDE.md" ~/.claude/CLAUDE.md
 #
 # Never overwrite a live file. Losing real settings is worse than staying out of sync,
 # so on any difference we report and let you decide.
-if [ ! -e ~/.claude/settings.json ]; then
+if [ -L ~/.claude/settings.json ]; then
+  # Left over from when this script symlinked it. The link still resolves to the repo,
+  # so replacing it with a copy of the repo file preserves the content exactly.
+  rm ~/.claude/settings.json
+  cp "$DOTFILES/claude/settings.json" ~/.claude/settings.json
+  echo "  settings.json: converted symlink -> real file"
+elif [ ! -e ~/.claude/settings.json ]; then
   cp "$DOTFILES/claude/settings.json" ~/.claude/settings.json
   echo "  settings.json: installed"
 elif ! diff -q "$DOTFILES/claude/settings.json" ~/.claude/settings.json >/dev/null 2>&1; then
