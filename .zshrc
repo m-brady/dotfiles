@@ -1,6 +1,8 @@
 eval "$(/opt/homebrew/bin/mise activate zsh)"
 eval "$(starship init zsh)"
-export PATH="/Users/michaelbrady/.bun/bin:$PATH"
+# bun comes from mise (see ~/.config/mise/config.toml), not from ~/.bun or Homebrew.
+# The old `export PATH="$HOME/.bun/bin:$PATH"` here pointed at a directory that no
+# longer exists; the completions line below is guarded, so it stays harmlessly.
 
 # opencode
 export PATH=/Users/michaelbrady/.opencode/bin:$PATH
