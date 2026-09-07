@@ -25,6 +25,13 @@ ln -sf "$DOTFILES/starship.toml" ~/.config/starship.toml
 mkdir -p ~/.claude
 ln -sf "$DOTFILES/claude/CLAUDE.md" ~/.claude/CLAUDE.md
 
+# The whole skills directory is linked, not one link per skill. Claude Code writes a new
+# skill straight into ~/.claude/skills/<name>/, so linking the directory means every
+# skill you write from now on is tracked with no edit here. Per-skill links would need a
+# new line each time, and "remember to add a line" is the same failure that let
+# settings.json drift for four months.
+ln -sfn "$DOTFILES/claude/skills" ~/.claude/skills
+
 # settings.json is COPIED, never symlinked. Claude Code writes it atomically (temp file
 # + rename), and that rename REPLACES a symlink with a regular file — so a symlink here
 # silently stops tracking after the very first write. This failed twice: four months of
