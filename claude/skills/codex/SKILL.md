@@ -122,10 +122,25 @@ Each of these costs a whole run to rediscover.
 1. **`codex exec` defaults to `workspace-write`, not read-only.** A "just have a look at
    this" run will edit files. Pass `-s read-only` on every plan and every review. Check
    the `sandbox:` line codex prints at startup — it tells you which mode you got.
-2. **Codex reads `AGENTS.md` and never reads `CLAUDE.md`.** Most repos here have a
-   detailed `CLAUDE.md` and no root `AGENTS.md`, so codex starts blind: it does not know
-   the deploy rules, the test commands, or which client is live. Put the facts it needs
-   in the prompt, or tell it to read the `CLAUDE.md` path first. A codex plan that
+2. **Codex reads `AGENTS.md` and never reads `CLAUDE.md`.** Check which you have before
+   assuming codex has any context:
+
+   ```bash
+   find . -name AGENTS.md -not -path './node_modules/*' -not -path './.git/*'
+   ```
+
+   Where a repo pairs each `CLAUDE.md` with an `AGENTS.md` symlink beside it, codex gets
+   the same layered context you do and nothing more is needed. `franticfanfic` does this
+   in all nine directories that have a `CLAUDE.md`. Where a repo does not, codex starts
+   blind — it will not know the deploy rules, the test commands, or which client is
+   live. Then either state those facts in the prompt, or add the symlinks yourself, one
+   per directory that has a `CLAUDE.md`:
+
+   ```bash
+   (cd <dir> && ln -s CLAUDE.md AGENTS.md)
+   ```
+
+   A symlink is better than a second file, which only goes stale. A codex plan that
    ignores a documented constraint is usually this, not a bad model.
 3. **A real run outlasts the default Bash timeout.** Planning at `high` takes minutes.
    Pass `timeout: 600000`, or run it in the background and pick the result up later.
