@@ -32,6 +32,17 @@ ln -sf "$DOTFILES/claude/CLAUDE.md" ~/.claude/CLAUDE.md
 # settings.json drift for four months.
 ln -sfn "$DOTFILES/claude/skills" ~/.claude/skills
 
+# Codex reads user-level skills from ~/.codex/skills/<name>/SKILL.md, the same SKILL.md
+# shape Claude Code uses. Skills that both agents should share are linked one by one from
+# claude/skills, so a Claude-only skill stays Claude-only. The directory name still says
+# "claude" because ~/.claude/skills is linked to it whole and renaming would break that.
+# Codex ignores `disable-model-invocation`, so a shared skill must also state its
+# invocation rule in the body text.
+mkdir -p ~/.codex/skills
+for shared_skill in unslop; do
+  ln -sfn "$DOTFILES/claude/skills/$shared_skill" ~/.codex/skills/"$shared_skill"
+done
+
 # settings.json is COPIED, never symlinked. Claude Code writes it atomically (temp file
 # + rename), and that rename REPLACES a symlink with a regular file — so a symlink here
 # silently stops tracking after the very first write. This failed twice: four months of
