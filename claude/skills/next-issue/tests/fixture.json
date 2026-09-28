@@ -1,0 +1,15 @@
+{
+  "repo": "acme/widget",
+  "defaultBranch": "main",
+  "collectedAt": "2026-09-13T00:00:00Z",
+  "labels": [{"name":"bug","description":"Defect","color":"d73a4a"}],
+  "milestones": [{"title":"1.0","number":1}],
+  "issues": [
+    {"number":12,"title":"Broken save","url":"u12","createdAt":"2026-01-01","updatedAt":"2026-09-01","comments":[{"body":"full comment","author":{"login":"a"}}],"labels":[{"name":"bug"}],"milestone":{"title":"1.0"},"assignees":[{"login":"dev"}],"body":"full body","closedByPullRequestsReferences":[{"number":8}]},
+    {"number":11,"title":"Waiting cleanup","url":"u11","createdAt":"2026-01-01","updatedAt":"2026-08-01","comments":[],"labels":["status: waiting"],"milestone":null,"assignees":[],"body":"cleanup","closedByPullRequestsReferences":[]},
+    {"number":10,"title":"Tracking","url":"u10","createdAt":"2026-01-01","updatedAt":"2026-08-01","comments":[],"labels":[{"name":"tracking"}],"milestone":null,"assignees":[],"body":"container","closedByPullRequestsReferences":[]}
+  ],
+  "openPRs": [{"number":8,"title":"Save fix","body":"formal link without text reference","isDraft":false,"updatedAt":"2026-09-12","headRefName":"fix","url":"pr8"}],
+  "mergedPRs": [{"number":7,"title":"Maybe cleanup","body":"Would also fix #11","mergedAt":"2026-09-10","url":"pr7"}],
+  "commits": [{"sha":"abcdef123456","title":"Fixes #12","body":"","at":null}]
+}
