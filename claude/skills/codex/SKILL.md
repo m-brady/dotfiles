@@ -1,6 +1,6 @@
 ---
 name: codex
-description: "Run OpenAI's Codex CLI (`codex exec`) as a second coding agent from inside Claude Code — to plan a task, implement it, or review a diff with a different model's eyes. Use this skill whenever the user says codex, gpt-6, astra, sol, terra, luna, `codex exec`, 'ask codex', 'get codex to do it', 'what does codex think', 'second opinion', 'have another model look at this', 'let codex plan it', 'run this past gpt', or asks to compare two models on the same task. Also use it before running any `codex` command by hand: it carries the model table, the exact non-interactive command shapes, and five traps that each waste a run — `codex exec` writes to your files by default, codex reads AGENTS.md and never sees CLAUDE.md, a real run outlasts the default Bash timeout, the `review` subcommand rejects both a trailing `-s` and a prompt alongside `--uncommitted`, and a piped stdin gets silently appended to the prompt."
+description: "Run OpenAI's Codex CLI (`codex exec`) as a second coding agent from Claude Code, to plan a task, implement it, or review a diff with a different model. Use it when the user says codex, gpt, astra, sol, terra, luna, 'ask codex', 'second opinion' or 'have another model look at this', when they ask to compare two models on one task, and before you run any `codex` command by hand. It has the command shapes, the model table and cost defaults, and six traps that each waste a run."
 ---
 
 # Codex CLI
@@ -12,7 +12,8 @@ three situations, and not otherwise:
   strongest use — an adversarial review of a plan or a diff you already wrote.
 - **Parallel work.** Codex runs in its own process. Hand it a self-contained job and
   keep working while it runs.
-- **The user asked for it by name.** Then just run it.
+- **The user asked for it by name.** Then run it, after you confirm the model and
+  effort (see below).
 
 If the task is something you can do directly, do it directly. Shelling out to another
 agent costs minutes and subscription quota, and it starts with none of your context.
@@ -23,11 +24,15 @@ Every mode uses `codex exec`, the non-interactive entry point. Always pass a mod
 effort, a sandbox, and an output file, so nothing depends on the user's `config.toml`
 drifting.
 
+**Before every run, tell the user the model, the effort and the scope, and wait
+for a yes.** Runs spend the user's ChatGPT plan quota. A yes for one run does not
+cover the next one.
+
 **Plan — codex thinks, you implement.** Read-only, so codex cannot touch the tree:
 
 ```bash
 codex exec -s read-only \
-  -m gpt-6-astra -c model_reasoning_effort="high" \
+  -m gpt-6-sol -c model_reasoning_effort="medium" \
   -o /tmp/codex-plan.md \
   "Read apps/worker/src/game-do.ts and propose how to add X. Do not write code. \
 List the files to change and the risk in each." < /dev/null
@@ -38,7 +43,7 @@ List the files to change and the risk in each." < /dev/null
 
 ```bash
 codex exec -s workspace-write \
-  -m gpt-5.6-terra -c model_reasoning_effort="medium" \
+  -m gpt-6-sol -c model_reasoning_effort="medium" \
   -o /tmp/codex-out.md \
   "<the task, plus the constraints codex cannot infer>" < /dev/null
 ```
@@ -49,7 +54,7 @@ Afterwards, read `git diff` yourself. Do not report the work as done on codex's 
 
 ```bash
 codex exec -s read-only \
-  -m gpt-6-astra -c model_reasoning_effort="high" \
+  -m gpt-6-sol -c model_reasoning_effort="medium" \
   -o /tmp/codex-review.md \
   review --uncommitted < /dev/null
 ```
@@ -64,7 +69,7 @@ prompt instead:
 
 ```bash
 codex exec -s read-only \
-  -m gpt-6-astra -c model_reasoning_effort="high" \
+  -m gpt-6-sol -c model_reasoning_effort="medium" \
   -o /tmp/codex-review.md \
   review "Review the uncommitted changes. Focus on correctness during live game \
 sessions; ignore style." < /dev/null
@@ -83,20 +88,54 @@ codex exec resume --last -o /tmp/codex-followup.md "<follow-up question>" < /dev
 Pick by how hard the task is, not by habit. Effort matters as much as the model — an
 `xhigh` run takes several times as long as a `low` one.
 
-| Slug | Good for | Efforts | Default |
-| --- | --- | --- | --- |
-| `gpt-6-astra` | hard planning, adversarial review, anything you want a real second opinion on | low, medium, high, xhigh, max, ultra | low |
-| `gpt-5.6-sol` | everyday agentic work; the user's own config default | low, medium, high, xhigh, max, ultra | low |
-| `gpt-5.6-terra` | normal implementation work | low, medium, high, xhigh, max, ultra | medium |
-| `gpt-5.6-luna` | fast, cheap runs — lookups, summaries, a quick sanity check | low, medium, high, xhigh, max | medium |
-| `gpt-5.5` | previous generation; use only to compare against it | low, medium, high, xhigh | medium |
-| `gpt-5.4-mini` | small mechanical jobs | low, medium, high, xhigh | medium |
+GPT-6 (Sol and Luna from 2026-09-22, Astra from about 2026-09-01) replaces the GPT-5.6
+models. Codex itself now labels GPT-5.6 "Older" and GPT-5.5 "Legacy". **Cost** is
+the credit rate per 1M output tokens, relative to `gpt-6-sol`, from OpenAI's pricing
+page.
 
-Sensible defaults: `gpt-6-astra` at `high` to plan or review, `gpt-5.6-terra` at
-`medium` to implement, `gpt-5.6-luna` at `low` to look something up.
+| Slug | Good for | Efforts | Start at | Cost |
+| --- | --- | --- | --- | --- |
+| `gpt-6-astra` | the hardest end-to-end work. Only when the user asks for it by name. **Never at `high` or above**: it costs too much on the user's plan | low … max, ultra | low | 5× |
+| `gpt-6-sol` | the default for all real work: planning, review, implementation, complex coding | low … max, ultra | medium | 1× |
+| `gpt-6-luna` | focused, repeatable jobs: lookups, extraction, summaries, small scoped edits. The user's own `config.toml` default (at `high`) | low … max (no ultra) | low for a lookup, high for focused coding | 0.05× |
+| `gpt-5.6-sol` | only to compare against GPT-6 | low … max, ultra | low | 2× |
+| `gpt-5.6-terra` | only to compare against GPT-6. There is no `gpt-6-terra`; use `gpt-6-sol`, which costs less | low … max, ultra | medium | 1.2× |
+| `gpt-5.6-luna` | only to compare against GPT-6 | low … max | medium | 0.12× |
+| `gpt-5.5` | nothing. **Retires from Codex on 2026-10-14** | low … xhigh | medium | 3× |
 
-This table was read on 2026-09-06 and it goes stale. The live list is a JSON file —
-print it when a slug is rejected or when you want to check for a new model:
+`gpt-5.4` and `gpt-5.4-mini` retired from Codex on 2026-08-31. Do not offer them.
+
+Defaults: `gpt-6-sol` at `medium` to plan, review or implement, and `gpt-6-luna` at
+`low` to look something up. Keep a review to one or two focus areas, and do not tell
+codex to read `node_modules`.
+
+**Which effort.** OpenAI's guidance, in short:
+
+- `low` — quick, well-scoped tasks.
+- `medium` — tasks that need some planning. The right start for Sol.
+- `high`, `xhigh` — hard work with many steps, sources or tradeoffs. OpenAI suggests
+  Sol at `xhigh` for "careful review of ... code". Offer it for a large or risky diff,
+  but say that it costs more and confirm first.
+- `max` — more time on one hard problem. "Most tasks do not need Max or Ultra."
+- `ultra` — codex splits the task into parallel subagents. Use it only when the work
+  divides into separate parts, and never without the user's explicit request: it
+  multiplies the quota spend.
+
+Effort levels do not map one-to-one between GPT-5.6 and GPT-6. A GPT-5.6 setting that
+worked is not proof that the same effort on GPT-6 is right.
+
+**Fast mode** (`service_tier = "fast"`, or `/fast on` in the TUI) costs 2.5× the
+normal credit rate on GPT-6. Do not turn it on. Leave it to the user.
+
+Sources, read on 2026-09-28 (the old `developers.openai.com/codex/...` links now
+redirect here):
+
+- https://learn.chatgpt.com/docs/models — what each model is for, efforts, retirements
+- https://learn.chatgpt.com/docs/model-selection — which model and effort for which task
+- https://learn.chatgpt.com/docs/pricing — message limits and credit rates for each plan
+
+This table goes stale. The live list is a JSON file — print it when a slug is rejected
+or when you want to check for a new model:
 
 ```bash
 python3 -c "import json;d=json.load(open('$HOME/.codex/models_cache.json'));\
@@ -159,6 +198,20 @@ Each of these costs a whole run to rediscover.
    reads it and adds it as a `<stdin>` block — you get "Reading additional input from
    stdin..." and a polluted prompt. End every command with `< /dev/null` unless you are
    piping something on purpose.
+6. **The `codex` on your PATH can be older than the model list.** Codex fetches the
+   model list from the server into `~/.codex/models_cache.json`, so a slug can appear
+   there before the installed CLI knows it. OpenAI's changelog lists GPT-6 Sol and Luna
+   under CLI 0.157.0. The Homebrew cask (`/opt/homebrew/bin/codex`) does not update
+   itself; the ChatGPT desktop app has its own separate copy. Check before the first
+   GPT-6 run:
+
+   ```bash
+   codex --version   # want 0.157.0 or later for gpt-6-sol / gpt-6-luna
+   brew outdated --cask codex
+   ```
+
+   If it is older, ask the user to run `brew upgrade --cask codex`. Do not fall back
+   to a GPT-5.6 model without telling the user.
 
 Two more things worth knowing:
 
