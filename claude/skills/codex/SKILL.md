@@ -32,7 +32,7 @@ cover the next one.
 
 ```bash
 codex exec -s read-only \
-  -m gpt-6-sol -c model_reasoning_effort="medium" \
+  -m gpt-6.1-sol -c model_reasoning_effort="medium" \
   -o /tmp/codex-plan.md \
   "Read apps/worker/src/game-do.ts and propose how to add X. Do not write code. \
 List the files to change and the risk in each." < /dev/null
@@ -43,7 +43,7 @@ List the files to change and the risk in each." < /dev/null
 
 ```bash
 codex exec -s workspace-write \
-  -m gpt-6-sol -c model_reasoning_effort="medium" \
+  -m gpt-6.1-sol -c model_reasoning_effort="medium" \
   -o /tmp/codex-out.md \
   "<the task, plus the constraints codex cannot infer>" < /dev/null
 ```
@@ -54,7 +54,7 @@ Afterwards, read `git diff` yourself. Do not report the work as done on codex's 
 
 ```bash
 codex exec -s read-only \
-  -m gpt-6-sol -c model_reasoning_effort="medium" \
+  -m gpt-6.1-sol -c model_reasoning_effort="medium" \
   -o /tmp/codex-review.md \
   review --uncommitted < /dev/null
 ```
@@ -69,7 +69,7 @@ prompt instead:
 
 ```bash
 codex exec -s read-only \
-  -m gpt-6-sol -c model_reasoning_effort="medium" \
+  -m gpt-6.1-sol -c model_reasoning_effort="medium" \
   -o /tmp/codex-review.md \
   review "Review the uncommitted changes. Focus on correctness during live game \
 sessions; ignore style." < /dev/null
@@ -88,24 +88,27 @@ codex exec resume --last -o /tmp/codex-followup.md "<follow-up question>" < /dev
 Pick by how hard the task is, not by habit. Effort matters as much as the model — an
 `xhigh` run takes several times as long as a `low` one.
 
-GPT-6 (Sol and Luna from 2026-09-22, Astra from about 2026-09-01) replaces the GPT-5.6
-models. Codex itself now labels GPT-5.6 "Older" and GPT-5.5 "Legacy". **Cost** is
-the credit rate per 1M output tokens, relative to `gpt-6-sol`, from OpenAI's pricing
-page.
+GPT-6.1 Sol (from 2026-09-29) replaces GPT-6 Sol as the default model. OpenAI says it
+gives "near-Astra performance for complex work at a lower cost than Astra". GPT-6 (Sol
+and Luna from 2026-09-22, Astra from about 2026-09-01) replaced the GPT-5.6 models.
+Codex itself now labels GPT-6 Sol "Previous generation", GPT-5.6 "Older" and GPT-5.5
+"Legacy". **Cost** is the credit rate per 1M output tokens, relative to `gpt-6.1-sol`,
+from OpenAI's pricing page.
 
 | Slug | Good for | Efforts | Start at | Cost |
 | --- | --- | --- | --- | --- |
 | `gpt-6-astra` | the hardest end-to-end work. Only when the user asks for it by name. **Never at `high` or above**: it costs too much on the user's plan | low … max, ultra | low | 5× |
-| `gpt-6-sol` | the default for all real work: planning, review, implementation, complex coding | low … max, ultra | medium | 1× |
+| `gpt-6.1-sol` | the default for all real work: planning, review, implementation, complex coding | low … max, ultra | medium | 1× |
 | `gpt-6-luna` | focused, repeatable jobs: lookups, extraction, summaries, small scoped edits. The user's own `config.toml` default (at `high`) | low … max (no ultra) | low for a lookup, high for focused coding | 0.05× |
+| `gpt-6-sol` | only to compare against GPT-6.1 Sol. Same output rate, but cached input costs 2× as much | low … max, ultra | medium | 1× |
 | `gpt-5.6-sol` | only to compare against GPT-6 | low … max, ultra | low | 2× |
-| `gpt-5.6-terra` | only to compare against GPT-6. There is no `gpt-6-terra`; use `gpt-6-sol`, which costs less | low … max, ultra | medium | 1.2× |
+| `gpt-5.6-terra` | only to compare against GPT-6. There is no `gpt-6-terra`; use `gpt-6.1-sol`, which costs less | low … max, ultra | medium | 1.2× |
 | `gpt-5.6-luna` | only to compare against GPT-6 | low … max | medium | 0.12× |
 | `gpt-5.5` | nothing. **Retires from Codex on 2026-10-14** | low … xhigh | medium | 3× |
 
 `gpt-5.4` and `gpt-5.4-mini` retired from Codex on 2026-08-31. Do not offer them.
 
-Defaults: `gpt-6-sol` at `medium` to plan, review or implement, and `gpt-6-luna` at
+Defaults: `gpt-6.1-sol` at `medium` to plan, review or implement, and `gpt-6-luna` at
 `low` to look something up. Keep a review to one or two focus areas, and do not tell
 codex to read `node_modules`.
 
@@ -125,14 +128,16 @@ Effort levels do not map one-to-one between GPT-5.6 and GPT-6. A GPT-5.6 setting
 worked is not proof that the same effort on GPT-6 is right.
 
 **Fast mode** (`service_tier = "fast"`, or `/fast on` in the TUI) costs 2.5× the
-normal credit rate on GPT-6. Do not turn it on. Leave it to the user.
+normal credit rate on GPT-6 and GPT-6.1. Do not turn it on. Leave it to the user.
 
-Sources, read on 2026-09-28 (the old `developers.openai.com/codex/...` links now
-redirect here):
+Sources, read on 2026-09-29 (the old `developers.openai.com/codex/...` links now
+redirect here). Add `.md` to a docs URL to get the full page as markdown; the HTML
+version can arrive cut short:
 
 - https://learn.chatgpt.com/docs/models — what each model is for, efforts, retirements
 - https://learn.chatgpt.com/docs/model-selection — which model and effort for which task
 - https://learn.chatgpt.com/docs/pricing — message limits and credit rates for each plan
+- https://learn.chatgpt.com/codex/changelog — which CLI version added which model
 
 This table goes stale. The live list is a JSON file — print it when a slug is rejected
 or when you want to check for a new model:
@@ -201,17 +206,20 @@ Each of these costs a whole run to rediscover.
 6. **The `codex` on your PATH can be older than the model list.** Codex fetches the
    model list from the server into `~/.codex/models_cache.json`, so a slug can appear
    there before the installed CLI knows it. OpenAI's changelog lists GPT-6 Sol and Luna
-   under CLI 0.157.0. The Homebrew cask (`/opt/homebrew/bin/codex`) does not update
-   itself; the ChatGPT desktop app has its own separate copy. Check before the first
-   GPT-6 run:
+   under CLI 0.157.0, and adds GPT-6.1 Sol to the bundled catalog in CLI 0.159.1. The
+   changelog does not state a minimum version for GPT-6.1 Sol. The Homebrew cask
+   (`/opt/homebrew/bin/codex`) does not update itself, and it can trail the changelog
+   by a day or more; the ChatGPT desktop app has its own separate copy. Check before
+   the first run on a new model:
 
    ```bash
-   codex --version   # want 0.157.0 or later for gpt-6-sol / gpt-6-luna
+   codex --version   # want 0.157.0+ for gpt-6-sol / gpt-6-luna, 0.159.1+ for gpt-6.1-sol
    brew outdated --cask codex
    ```
 
-   If it is older, ask the user to run `brew upgrade --cask codex`. Do not fall back
-   to a GPT-5.6 model without telling the user.
+   If it is older, ask the user to run `brew upgrade --cask codex`. If `codex` rejects
+   `gpt-6.1-sol` and no upgrade is out yet, tell the user and offer `gpt-6-sol`. Do not
+   fall back to an older model without telling the user.
 
 Two more things worth knowing:
 
