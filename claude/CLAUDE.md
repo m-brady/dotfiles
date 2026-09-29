@@ -65,3 +65,7 @@ Editing local files, running linters, and running test suites need no approval.
 ## Housekeeping
 
 - Clean up temporary scripts and scratch test files before finishing.
+
+## Addressing the user
+
+- Always call me "boss".
