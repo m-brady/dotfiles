@@ -40,10 +40,10 @@ After reading the repository's taxonomy, reclassify the saved snapshot locally:
 ```
 
 Use `--exclude` to replace the saved list or `--all` to remove label exclusions.
-This changes the summary only and never refetches GitHub. Report exclusion counts
-and categories. Treat `blocked`, `needs-repro`, `needs-design`, and similar labels
+This changes the summary only and never refetches GitHub. Keep the exclusion counts
+for the one-line footer; give the breakdown by category only if the user asks. Treat `blocked`, `needs-repro`, `needs-design`, and similar labels
 as readiness signals when the repository uses them that way; valuable but gated
-work belongs under **Not a coding session**.
+work belongs on the **Blocked or later** line.
 
 The snapshot reports `meta.possiblyTruncated` when a GitHub list reaches its cap
 (500 issues, 100 open PRs, or 400 merged PRs). State that limitation rather than
@@ -104,32 +104,60 @@ commit references are leads only: inspect the diff or code before recommending t
 an issue be closed. Preserve this evidence-before-closure safeguard even when the
 closing language looks explicit.
 
-Verify deeply only the likely six-to-ten rows and any claim that work is already
-done. For the wider backlog, classification metadata and issue summaries are enough.
+Verify deeply only the likely three-to-five options and any claim that work is
+already done. For the wider backlog, classification metadata and issue summaries are enough.
 Stop when further reading would not change membership, order, batching, readiness,
 or a closure claim.
 
 ## Present the choice
 
-Open with one sentence covering eligible and excluded counts, in-flight removals,
-the focus and filter used, live backlog docs consulted, and any truncation.
+The reader wants a high-level view they can decide from in under a minute: what to
+do first, the few real options, and the trade-off of each. They are reading in a
+terminal. Long table cells wrap into a block of text, and they will not read a long
+report. All the research stays behind the answer. Show its conclusions, not the
+process, and give detail when the user asks for it. Aim for about 200 words.
 
-| # | Work item | Issues | Impact | Effort | Why now, and what deferring costs |
-|---|-----------|--------|--------|--------|-----------------------------------|
-| 1 | Short description | #123, #456 | High | Medium | Concrete value, timing, and batch synergy |
+Use this layout:
 
-Use six to ten rows when the backlog supports them. Rank roughly by impact per unit
-of effort, with cost of delay breaking ties; high-impact compounding work outranks
-a pile of cheap polish.
+```
+**Do next:** <the first move, with any prerequisite such as "merge PR #N first">.
+<One sentence: why this one, or the deadline that makes it urgent.>
 
-Add only sections that carry real information: **If you'd rather…** for a useful
-alternate; **Dependencies / ordering**; **Housekeeping** for fixes verified in code;
-**Not yet filed** for unverified live-doc claims; **Not a coding session** for gated
-work; and **Where I disagree with the labels**. Keep unfiled claims out of the ranked
-table until verified.
+1. <Work item in plain words> (#123, #456)
+   Impact <H/M/L> · Effort <H/M/L> · <Deadline, start date, or omit>
+   + <The main benefit, concrete: what it removes, fixes, or unblocks>
+   − <The main cost or risk: what it touches, what it waits for>
+
+2. ...
+
+**Blocked or later:** #N (<reason in 2-5 words>) · #N (<reason>)
+**Not filed yet:** <claim>. File it?
+<Eligible / total count> · <truncation, if any>. Ask for detail on any item.
+```
+
+Rules for the layout, and why:
+
+- **Answer first.** The "Do next" line is the decision; everything after it supports
+  or offers alternatives. Say if the top item needs a plan before code.
+- **Three to five options.** Rank roughly by impact per unit of effort, with cost of
+  delay breaking ties; high-impact compounding work outranks a pile of cheap polish.
+  More options dilute the choice. If only two are ready, show two.
+- **One `+` and one `−` line per option**, two at most. Each line is a single short
+  clause with a concrete fact (a line count, a file, a date, a user-visible effect).
+  If the pro and con need a paragraph, the item is not understood well enough yet.
+- **Put ordering inside the options.** A prerequisite goes in "Do next"; a conflict
+  between two options ("do not merge with #2 on the same day") goes in that option's
+  `−` line. Do not add a separate dependencies section.
+- **Footer lines carry one short phrase per issue.** "Blocked or later" covers gated,
+  deferred, and not-a-coding-session work. "Not filed yet" covers live-doc claims
+  you verified but no issue tracks. Add one line for a label you disagree with, or
+  for housekeeping verified in code (for example, an issue that can close), only
+  when it changes what the user does. Omit any footer line that has nothing in it.
+- **Counts go last, in one line.** Disclose truncation there. Drop file lists, issue
+  lists you read, and method notes; the user asks if they want them.
+
+Keep unfiled claims out of the ranked options until verified.
 
 When a live document points to a closed issue, read the closure explanation before
 calling the document stale. Completed work can be removed; work closed because it
 was parked must remain recorded, with its dead issue reference corrected.
-
-End with the concrete first move for the top item and whether it needs planning.
