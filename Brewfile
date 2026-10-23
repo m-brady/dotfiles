@@ -22,7 +22,7 @@ laptop = role == "laptop"
 # ---- Every machine ----------------------------------------------------------------
 
 # Non-official taps need trust. Trust only the formulae used, not the whole tap.
-tap "facebook/fb", trusted: { formulae: ["idb", "idb-companion"] }
+tap "facebook/fb", trusted: { formulae: ["idb", "idb-cli", "idb-companion"] }
 
 brew "cocoapods"
 brew "coreutils"
