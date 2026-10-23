@@ -21,6 +21,14 @@ ln -sf "$DOTFILES/.gitconfig" ~/.gitconfig
 mkdir -p ~/.config
 ln -sf "$DOTFILES/starship.toml" ~/.config/starship.toml
 
+# mise global tools. This file is the list of every global dev tool, so it must be
+# tracked: untracked, it was rewritten to node only and bun, go and golangci-lint went
+# with it. Install npm CLIs here as "npm:<tool>", never `npm i -g` or `corepack enable`.
+# Both put the tool inside one Node install, and the next Node upgrade drops it (pnpm
+# vanished that way on 2026-10-22). `mise use -g` writes through this link and keeps it.
+mkdir -p ~/.config/mise
+ln -sf "$DOTFILES/mise/config.toml" ~/.config/mise/config.toml
+
 # Claude Code
 mkdir -p ~/.claude
 ln -sf "$DOTFILES/claude/CLAUDE.md" ~/.claude/CLAUDE.md
@@ -68,12 +76,18 @@ fi
 
 echo "Dotfiles linked."
 
-# Homebrew
+# Homebrew. The Brewfile itself picks the tools for this machine (mini or laptop).
 if command -v brew &>/dev/null; then
   echo "Installing brew packages..."
   brew bundle --file="$DOTFILES/Brewfile"
 else
   echo "Homebrew not found. Install it first: https://brew.sh"
+fi
+
+# mise tools come last: mise itself is installed by the Brewfile above.
+if command -v mise &>/dev/null; then
+  echo "Installing mise tools..."
+  mise install
 fi
 
 echo "Done!"
