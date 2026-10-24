@@ -53,7 +53,17 @@ Any other repo: read its `CLAUDE.md` for the named gates. Run those, not extras.
 
 ## 4. Commit and push
 
-End the commit message with the attribution lines the session's system prompt gives. Then:
+End the commit message with the attribution lines the session's system prompt gives.
+
+**Review before you push, if the repo has a review workflow.** If `.claude/workflows/review-pr.js`
+exists, run it on the committed branch with the Workflow tool: name `review-pr`, no target (it
+reviews `origin/main...HEAD`). If the name does not resolve, pass
+`scriptPath: .claude/workflows/review-pr.js`. Fix or answer each Important finding in a new commit.
+If you changed code, run it once more with `--since <head SHA of the first review>`. Stop after 2
+rounds: if an Important finding remains, ask the user whether the approach needs to change. Other
+repos skip this paragraph.
+
+Then:
 
 ```bash
 git push -u origin <branch>
@@ -68,6 +78,11 @@ wrong name silently pushes a different branch.
 gh pr create --title "..." --body "..."
 gh pr checks <N> --json name,bucket,state --jq '.[] | "\(.name): \(.bucket) (\(.state))"'
 ```
+
+The PR body has these sections in every repo: **Testing** (what you ran and the result), **Risk**
+(what the change can break), and **How to revert**. A repo with a review workflow also gets
+**Review** (the facets that ran, each Important finding and what you did about it) and
+**New copy** (each new player-facing string, or "none").
 
 **Always the `--json` form.** Plain `gh pr checks` prints a cancelled job in the `fail` column.
 
