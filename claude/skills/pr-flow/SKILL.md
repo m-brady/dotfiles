@@ -49,6 +49,17 @@ never mentioned it. Read `git status` and name the files.
 | franticfanfic | `pnpm run knip`, then the matching `pnpm run verify:*` | `verify:frontend` for `apps/frontend-next`, `verify:worker` for the workers and packages, `verify:all` for wire types. A `.claude/hooks/knip-push-gate.sh` runs knip on push anyway; running it first turns a blocked push into a fixed one. |
 | gymlog | `.githooks/pre-push` runs the four CI checks on push | Do not re-run them by hand first. If the hook is not armed, `pnpm install` or `git config core.hooksPath .githooks`. Never `--no-verify` onto `main`. |
 
+**franticfanfic browser test.** If the change touches `apps/frontend-next/src/`, run
+`pnpm run test:e2e:browser` after `verify:frontend` (about 2 minutes). Check the ports first:
+
+```bash
+lsof -nP -iTCP:5173 -iTCP:8787 -iTCP:8788 -sTCP:LISTEN
+```
+
+Playwright reuses a server that is already running, so a port owned by another session or worktree
+tests that checkout's code. If any port is in use, do not run the test and do not stop the process.
+Say in the PR body that the browser test was skipped, and why.
+
 Any other repo: read its `CLAUDE.md` for the named gates. Run those, not extras.
 
 ## 4. Commit and push
