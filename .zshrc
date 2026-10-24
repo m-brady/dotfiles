@@ -50,3 +50,6 @@ fi
 if [[ -o interactive && -n $HERDR_PANE_ID && -z $CLAUDECODE && $PWD == */.claude/worktrees/* ]]; then
   cd "${PWD%%/.claude/worktrees/*}"
 fi
+
+# OrbStack CLI (docker, docker compose)
+export PATH="$HOME/.orbstack/bin:$PATH"
