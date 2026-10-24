@@ -42,3 +42,11 @@ if [[ -d "/opt/homebrew/share/android-commandlinetools" ]]; then
   export ANDROID_HOME="/opt/homebrew/share/android-commandlinetools"
   export PATH="$JAVA_HOME/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"
 fi
+
+# herdr: a new tab starts in the cwd of the pane you left (terminal.new_cwd = "follow").
+# That pane is often a `claude --worktree` session, so the new shell opens inside
+# <repo>/.claude/worktrees/<name>. Start in <repo> instead. Interactive herdr shells
+# only: Claude Code's own Bash-tool shells must stay in the worktree they were given.
+if [[ -o interactive && -n $HERDR_PANE_ID && -z $CLAUDECODE && $PWD == */.claude/worktrees/* ]]; then
+  cd "${PWD%%/.claude/worktrees/*}"
+fi
